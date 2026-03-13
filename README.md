@@ -4,7 +4,7 @@
 Predict whether a NYC 311 service request will experience an unusually long resolution time based on request characteristics.
 
 ## Dataset
-NYC Open Data — 311 Service Requests
+NYC Open Data: 311 Service Requests
 
 ## Phase I Proof of Concept
 
