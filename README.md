@@ -25,15 +25,21 @@ Specifically, we have:
 
 ## How to Run
 
-1. Install dependencies:
+
+1. Download the data:
+   - Go to https://www.kaggle.com/datasets/new-york-city/ny-311-service-requests
+   - Click **Download** - this will download a `.zip` file
+   - Unzip the file and place `311-service-requests-from-2010-to-present.csv` in the `data/` folder
+
+2. Install dependencies:
 
 pip install -r requirements.txt
 
-2. Open notebook:
+3. Open notebook:
 
 notebooks/phase1_poc.ipynb
 
-3. Run all cells
+4. Run all cells
 
 ## Repository Structure
 
