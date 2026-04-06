@@ -1,0 +1,107 @@
+---
+title: "Bayesian Model - NYC 311 Resolution Time"
+author: "Arshia Verma"
+date: "2026-04-02"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(brms)
+library(dplyr)
+library(tidybayes)
+```
+```{r load-data, cache=TRUE}
+library(here)
+library(brms)
+library(tidybayes)
+# load preprocessed sample directly - full CSV is too large to reload
+df_model <- readRDS(here("results", "df_model.rds"))
+head(df_model)
+```
+
+
+```{r check-priors}
+default_prior(log_resolution ~ Borough + hour_scaled + day_of_week_scaled + (1|Complaint.Type),
+              data = df_model,
+              family = gaussian())
+```
+```{r fit-model, cache=TRUE}
+model_path <- here("results", "nyc_brm.rds")
+
+if (file.exists(model_path)) {
+  nyc_brm <- readRDS(model_path)
+} else {
+  nyc_brm <- brm(
+    log_resolution ~ Borough + hour_scaled + day_of_week_scaled + (1|Complaint.Type),
+    family = gaussian(),
+    data = df_model,
+    chains = 4,
+    cores = 4,
+    iter = 3000,
+    warmup = 500,
+    thin = 2,
+    seed = 42
+  )
+  saveRDS(nyc_brm, model_path)
+}
+```
+
+```{r summary}
+summary(nyc_brm)
+```
+```{r plot-chains}
+# Check convergence and posterior distributions
+plot(nyc_brm)
+```
+```{r bayes-r2}
+# Bayesian R^2
+bayes_R2(nyc_brm)
+```
+```{r conditional-effects}
+# How does each feature affect log_resolution?
+plot(conditional_effects(nyc_brm, "Borough"))
+plot(conditional_effects(nyc_brm, "hour_scaled"))
+```
+```{r posterior-predict}
+# Posterior predictive distribution for a specific example
+# "A noise complaint in Brooklyn at 10am on a Tuesday"
+# hour_scaled: (10 - mean(hour)) / sd(hour)
+# day_of_week_scaled: Tuesday = 2
+hour_mean <- mean(df_model$hour)
+hour_sd <- sd(df_model$hour)
+dow_mean <- mean(df_model$day_of_week)
+dow_sd <- sd(df_model$day_of_week)
+
+example_request <- data.frame(
+  Borough = factor("BROOKLYN", levels = levels(df_model$Borough)),
+  hour_scaled = (10 - hour_mean) / hour_sd,
+  day_of_week_scaled = (2 - dow_mean) / dow_sd,
+  Complaint.Type = factor("Noise - Residential", levels = levels(df_model$Complaint.Type))
+)
+
+post_preds <- posterior_predict(nyc_brm, newdata = example_request, allow_new_levels=TRUE)
+hist(exp(post_preds), 
+     main = "Posterior Predictive: Noise Complaint in Brooklyn (10am Tue)",
+     xlab = "Predicted Resolution Hours",
+     col = "steelblue", breaks = 50)
+cat("Posterior mean resolution:", round(mean(exp(post_preds)), 1), "hours\n")
+```
+```{r complaint-uncertainty}
+# Which complaint types have the widest uncertainty?
+library(dplyr)
+library(tidybayes)
+nyc_brm %>%
+  spread_draws(r_Complaint.Type[Complaint.Type, ]) %>%
+  group_by(Complaint.Type) %>%
+  summarise(
+    mean = mean(r_Complaint.Type),
+    sd = sd(r_Complaint.Type),
+    q05 = quantile(r_Complaint.Type, 0.05),
+    q95 = quantile(r_Complaint.Type, 0.95)
+  ) %>%
+  arrange(desc(sd)) %>%
+  print(n = 20)
+```

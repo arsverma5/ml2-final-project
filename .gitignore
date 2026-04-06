@@ -1,2 +1,11 @@
 data/311-service-requests-from-2010-to-present.csv
 .venv/
+.Rproj.user
+results/*.rds
+data/
+notebooks/*_cache/
+notebooks/*_files/
+notebooks/*.html
+.Rhistory
+.RData
+.Rproj.user/
