@@ -75,10 +75,6 @@ with tab2:
 
     incident_zip = st.number_input("Incident Zip", min_value=0, value=11201)
 
-    hour = st.slider("Hour of Day (0–23)", 0, 23, 10)
-    day_of_week = st.slider("Day of Week (1=Mon, 7=Sun)", 1, 7, 2)
-    month = st.slider("Month (1=Jan, 12=Dec)", 1, 12, 1)
-
     st.write("Inputs Preview:")
     st.write({
         "Complaint.Type": complaint_type,
@@ -86,10 +82,7 @@ with tab2:
         "Police.Precinct": police_precinct,
         "Borough": borough,
         "Location.Type": location_type,
-        "incident_zip": incident_zip,
-        "Hour": hour,
-        "Day.Of.Week": day_of_week,
-        "Month": month,
+        "Incident.Zip": incident_zip,
     })
 
     input_df = pd.DataFrame([{
@@ -98,22 +91,8 @@ with tab2:
         "location_type": location_type,
         "police_precinct": police_precinct,
         "borough": borough,
-        "hour": hour,
-        "day_of_week": day_of_week,
-        "month": month,
         "incident_zip": incident_zip
     }]) 
-
-    input_df['hour_sin'] = np.sin(2 * np.pi * input_df['hour'] / 24)
-    input_df['hour_cos'] = np.cos(2 * np.pi * input_df['hour'] / 24)
-
-    input_df['dow_sin'] = np.sin(2 * np.pi * input_df['day_of_week'] / 7)
-    input_df['dow_cos'] = np.cos(2 * np.pi * input_df['day_of_week'] / 7)
-
-    input_df['month_sin'] = np.sin(2 * np.pi * input_df['month'] / 12)
-    input_df['month_cos'] = np.cos(2 * np.pi * input_df['month'] / 12)
-
-    input_df = input_df.drop(columns=["hour", "day_of_week", "month"])
 
     cat_cols = ["agency", "complaint_type", "location_type", "borough", "police_precinct"]
 

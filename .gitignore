@@ -9,3 +9,6 @@ notebooks/*.html
 .Rhistory
 .RData
 .Rproj.user/
+*.joblib
+results/.DS_Store
+.DS_Store
