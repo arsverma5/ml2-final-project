@@ -48,7 +48,7 @@ with tab1:
  
     
 with tab2:
-    st.header("Neural Network")
+    st.header("Neural Network: Predict Resolution Time")
 
     st.write("""
     This page uses a trained neural network to predict NYC 311
