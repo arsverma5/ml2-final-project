@@ -38,7 +38,7 @@ with tab1:
         st.info("**Neural Network**\n\nMLP with 3 hidden layers predicting log resolution hours across 10 complaint types.")
     with col3:
         st.info("**Time Series** \n\nForecasts weekly complaint volume and resolution time by complaint type.")
-
+ 
     
 with tab2:
     st.header("Neural Network")
@@ -124,8 +124,8 @@ with tab4:
 
     @st.cache_data
     def load_ts_data():
-        weekly = pd.read_csv('data/weekly_counts.csv', parse_dates=['created_date'])
-        weekly_res = pd.read_csv('data/weekly_resolution.csv', parse_dates=['created_date'])
+        weekly = pd.read_csv('data_streamlit/weekly_counts.csv', parse_dates=['created_date'])
+        weekly_res = pd.read_csv('data_streamlit/weekly_resolution.csv', parse_dates=['created_date'])
         return weekly, weekly_res
 
     weekly, weekly_res = load_ts_data()
