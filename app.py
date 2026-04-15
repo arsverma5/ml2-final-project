@@ -7,7 +7,7 @@ from src.model import fit_sarima, forecast_sarima
 
 
 try:
-    model = joblib.load("results/model.joblib")
+    model = joblib.load("results/nn_model.joblib")
 except:
     model = None
 
