@@ -115,7 +115,7 @@ with tab2:
 
     if st.button("Predict Resolution Time (NN)"):
         if model is None:
-            st.error("The neural network model is not available. Please check the app logs or deployment configuration.")
+            st.error("The neural network model is not available.")
         else:
             pred_log = model.predict(input_df)[0]
             # reverse log transform
