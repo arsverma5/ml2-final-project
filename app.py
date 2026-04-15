@@ -43,6 +43,12 @@ with tab1:
 with tab2:
     st.header("Neural Network")
 
+    st.write("""
+    This page uses a trained neural network to predict NYC 311
+    service request resolution time from complaint and location features.
+    Predictions are made in log-hours and then converted back to actual hours.
+    """)
+
     st.subheader("Model Inputs")
 
     complaint_type = st.selectbox(
