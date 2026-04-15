@@ -3,12 +3,19 @@ import joblib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from src.model import fit_sarima, forecast_sarima
 
+MODEL_PATH = Path(__file__).resolve().parent / "nn_model.joblib"
+
+@st.cache_resource
+def load_model(path: Path):
+    return joblib.load(path)
 
 try:
-    model = joblib.load("nn_model.joblib")
-except:
+    model = load_model(MODEL_PATH)
+except Exception as exc:
+    st.error(f"Failed to load model: {exc}")
     model = None
 
 tab1, tab2, tab3, tab4 = st.tabs(["Home", " Neural Network", "Bayesian", "Time Series"])
@@ -107,10 +114,13 @@ with tab2:
         input_df[col] = input_df[col].astype(str)
 
     if st.button("Predict Resolution Time (NN)"):
-        pred_log = model.predict(input_df)[0]
-        # reverse log transform
-        pred = np.expm1(pred_log)
-        st.success(f"Predicted Resolution Time: {pred:.2f} hours")
+        if model is None:
+            st.error("The neural network model is not available. Please check the app logs or deployment configuration.")
+        else:
+            pred_log = model.predict(input_df)[0]
+            # reverse log transform
+            pred = np.expm1(pred_log)
+            st.success(f"Predicted Resolution Time: {pred:.2f} hours")
 
 with tab3:
     st.header("Bayesian Model: Predict Resolution Time")
