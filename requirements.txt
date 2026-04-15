@@ -1,6 +1,6 @@
 pandas
 numpy<2
-scikit-learn
+scikit-learn==1.5.1
 matplotlib
 streamlit
 plotly
